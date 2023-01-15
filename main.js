@@ -4,6 +4,7 @@ const btnUp = document.querySelector(".up");
 const btnLeft = document.querySelector(".left");
 const btnRight = document.querySelector(".right");
 const btnDown = document.querySelector(".down");
+const btnReload = document.querySelector(".reload");
 const spanLives = document.querySelector("#lives");
 const spanTime = document.querySelector("#time");
 const spanRecord = document.querySelector("#record");
@@ -197,6 +198,7 @@ document.addEventListener("click", (e) => {
   if (e.target.matches(".left")) moveLeft();
   if (e.target.matches(".right")) moveRight();
   if (e.target.matches(".down")) moveDown();
+  if (e.target.matches(".reload")) location.reload();
 });
 document.addEventListener("keydown", (e) => {
   //console.log(e.code);
