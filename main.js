@@ -4,6 +4,10 @@ const btnUp = document.querySelector(".up");
 const btnLeft = document.querySelector(".left");
 const btnRight = document.querySelector(".right");
 const btnDown = document.querySelector(".down");
+const spanLives = document.querySelector("#lives");
+const spanTime = document.querySelector("#time");
+const spanRecord = document.querySelector("#record");
+const pResult = document.querySelector("#result");
 
 window.addEventListener("load", setCanvasSize);
 window.addEventListener("resize", setCanvasSize);
@@ -11,6 +15,10 @@ let canvasSize;
 let elementSize;
 let level = 0;
 let lives = 3;
+let timeStart;
+let timePlayer;
+let timeInterval;
+
 const playerPosition = {
   x: undefined,
   y: undefined,
@@ -26,8 +34,8 @@ let enemiesPositions = [];
 function setCanvasSize() {
   canvasSize =
     window.innerWidth > window.innerHeight
-      ? innerHeight * 0.8
-      : innerWidth * 0.8;
+      ? innerHeight * 0.7
+      : innerWidth * 0.7;
   canvas.setAttribute("width", canvasSize);
   canvas.setAttribute("height", canvasSize);
   /* Calculando el tamaño de los elementos*/
@@ -53,9 +61,17 @@ function startGame() {
     gameWin();
     return;
   }
+  if (!timeStart) {
+    timeStart = Date.now();
+    timeInterval = setInterval(() => {
+      showTime();
+    }, 100);
+    showRecord();
+  }
   const mapRows = map.trim().split("\n");
   const mapRowCols = mapRows.map((row) => row.trim().split(""));
 
+  showLives();
   //console.log({ mapRows, mapRowCols });
   enemiesPositions = [];
   game.clearRect(0, 0, canvasSize, canvasSize);
@@ -91,6 +107,21 @@ function startGame() {
   movePlayer();
 }
 
+function showLives() {
+  const heartArray = Array(lives).fill(emojis["HEART"]);
+  //console.log(heartArray);
+  spanLives.innerHTML = "";
+  heartArray.forEach((heart) => {
+    spanLives.append(heart);
+  });
+}
+
+function showTime() {
+  spanTime.innerHTML = Date.now() - timeStart;
+}
+function showRecord() {
+  spanRecord.innerHTML = localStorage.getItem("record_time");
+}
 function movePlayer() {
   const colissionX = Math.trunc(playerPosition.x) === giftPosition.x;
   const colissionY = Math.trunc(playerPosition.y) === giftPosition.y;
@@ -122,15 +153,33 @@ function levelUp() {
 
 function gameWin() {
   console.log("Terminaste el juego");
+  clearInterval(timeInterval);
+  const recordTime = localStorage.getItem("record_time");
+  const playerTime = Date.now() - timeStart;
+
+  if (recordTime) {
+    if (recordTime >= playerTime) {
+      localStorage.setItem("record_time", playerTime);
+      pResult.innerHTML = "Superaste el Record";
+    } else {
+      pResult.innerHTML = "No superaste el record";
+    }
+  } else {
+    localStorage.setItem("record_time", playerTime);
+    pResult.innerHTML = "Primera vez? Muy bien, pero ahora trata de superarte";
+  }
+  console.log({ recordTime, playerTime });
 }
 
 function levelFail() {
   lives--;
+
   if (lives <= 0) {
     level = 0;
     lives = 3;
+    timeStart = undefined;
   }
-  console.log({ level, lives });
+  //console.log({ level, lives });
   playerPosition.x = undefined;
   playerPosition.y = undefined;
   startGame();
