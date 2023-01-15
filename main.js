@@ -32,16 +32,23 @@ const giftPosition = {
 let enemiesPositions = [];
 
 function setCanvasSize() {
-  canvasSize =
-    window.innerWidth > window.innerHeight
-      ? innerHeight * 0.7
-      : innerWidth * 0.7;
+  if (window.innerHeight > window.innerWidth) {
+    canvasSize = window.innerWidth * 0.75;
+  } else {
+    canvasSize = window.innerHeight * 0.75;
+  }
+
+  canvasSize = Number(canvasSize.toFixed(0));
+
   canvas.setAttribute("width", canvasSize);
   canvas.setAttribute("height", canvasSize);
-  /* Calculando el tamaño de los elementos*/
-  elementSize = canvasSize / 10.3;
+
+  elementSize = Number((canvasSize / 10).toFixed(0));
+
+  playerPosition.x = undefined;
+  playerPosition.y = undefined;
+
   startGame();
-  // console.log({ canvasSize, elementSize });
 }
 function startGame() {
   /* Metodos del Canvas */
